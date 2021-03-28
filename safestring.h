@@ -41,6 +41,10 @@ void    scvt    (long long size, char*    buffer, size_t count);	// Convert a si
 void    swcvt   (long long size, wchar_t* buffer, size_t count);	// Convert a size value to a human-readable wide string  e.g. 3328 converts to L"3.25KB"
 const size_t SCVT_MAX = 17;											// Maximum length of string returned by scvt() including terminator
 
+// For now just have wide versions of these functions
+void wcs_epoch_ISO8601(wchar_t* buffer, size_t length);
+void wcs_epoch_RFC1123(wchar_t* buffer, size_t length);
+
 // Generic text mappings for the safe string functions
 #if defined(_UNICODE)
 #define _tcslcpy    wcslcpy

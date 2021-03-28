@@ -3,7 +3,11 @@
 #include <cstdio>		// sprintf_s, vsnprintf_s
 #include <cstdarg>		// va_start
 #include <cstring>		// strlen etc.
+#include <locale>
 #include "safestring.h"
+
+static const wchar_t* days_w[] = {L"Sun", L"Mon", L"Tue", L"Wed", L"Thu", L"Fri", L"Sat"};
+static const wchar_t* months_w[] = {L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec"};
 
 
 size_t strtowcs (wchar_t* dst, const char* src, size_t count)
@@ -625,4 +629,24 @@ void swcvt(long long size, wchar_t* buffer, size_t count)
 
 	float num = (float)size / divisor;
 	swprintf_s(buffer, (size_t)count, L"%.2f%s", num, postfix);
+}
+
+
+void wcs_epoch_ISO8601(wchar_t* buffer, size_t length)
+{
+    std::time_t time = std::time(nullptr);
+    std::tm tm;
+    gmtime_s(&tm, &time);
+    slwprintf(buffer, length, L"%04u%02u%02uT%02u%02u%02uZ", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+}
+
+
+void wcs_epoch_RFC1123(wchar_t* buffer, size_t length)
+{
+    std::time_t time = std::time(nullptr);
+    std::tm tm;
+    gmtime_s(&tm, &time);
+    const wchar_t* day = days_w[tm.tm_wday];
+    const wchar_t* month = months_w[tm.tm_mon];
+    slwprintf(buffer, length, L"%s, %02u %s %04u %02u:%02u:%02u GMT", day, tm.tm_mday, month, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
 }
